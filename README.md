@@ -4,14 +4,21 @@
 
 Secure and friendly alternative to [dotenv](https://npmjs.com/package/dotenv), using functional programming. With strong tests to prove its safety.
 
+Follows the [Twelve Factor App](https://12factor.net) methodology.
+
 *Looking for the old `envy` that reads JSON? See [eliOcs/node-envy](https://github.com/eliOcs/node-envy).*
 
 ## Why?
 
  - Safest environment loader around.
- - Ensures file permissions are secure.
+ - Validates secure file permissions.
+ - Validates that required variables are defined.
  - No side effects, does not modify [`process.env`](https://nodejs.org/api/process.html#process_process_env).
  - Returns property names in [camelCase](https://github.com/sindresorhus/camelcase).
+
+Have you spent a day rotating passwords because a developer accidentally pushed them to the repository? Yeah, that actually happens and it can cause chaos at companies. It doesn't matter if you delete the commit. Once it's out there, game over. People who are authorized to read the repository may not be authorized to have those credentials, including third party tools and services. If the repository is public, search engines may have crawled it. Consider everything to be compromised.
+
+The `envy` module helps you prevent that situation by providing a convenient mechanism for everyone to store credentials and other config locally and validate that it is correct without commiting anything to the repository. It verifies that all relevant files have secure permissions and _coming soon_ that the secrets file is explicitly ignored so that it cannot accidentally be commited.
 
 ## Install
 
@@ -60,11 +67,11 @@ SENTENCE='Hi, there!'
 
 After assembling the environment from `.env` and [`process.env`](https://nodejs.org/api/process.html#process_process_env), it is filtered by a union of the properties in `.env` and `.env.example`. In other words, variables defined in either file will be returned and variables not defined in either file will be ignored. This is done to prevent surprising behavior, since `process.env` often contains a wide variety of variables, some of which are implicitly set without the user's direct knowledge. It is better to be explicit about the variables you use, which improves safety and debugging.
 
-## Tip
+## Tips
 
-We recommend using [joi](https://github.com/hapijs/joi) to further validate and parse the returned values.
+### Mixing with command line options
 
-A common setup would be:
+Make a CLI with [meow](https://github.com/sindresorhus/meow) and use [joi](https://github.com/hapijs/joi) to further validate and parse the returned values.
 
 ```js
 // cli.js
@@ -116,6 +123,13 @@ Type: `string`<br>
 Default: `.env`
 
 Path to the file where environment variables are kept. Must be [hidden](https://en.wikipedia.org/wiki/Hidden_file_and_hidden_directory#macOS) (start with a `.`). Will also be used to compute the path of the example file (by appending `.example`).
+
+## Resources
+
+ - [Think about sensitive data](http://blog.arvidandersson.se/2013/06/10/credentials-in-git-repos)
+ - [Manage secrets safely](https://digitalocean.com/community/tutorials/an-introduction-to-managing-secrets-safely-with-version-control-systems)
+ - [Remove secrets from a repository](https://help.github.com/articles/removing-sensitive-data-from-a-repository/)
+ - [Store config in the environment](https://12factor.net/config)
 
 ## Contributing
 
